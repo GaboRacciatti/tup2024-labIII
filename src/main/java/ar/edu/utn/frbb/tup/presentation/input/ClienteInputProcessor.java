@@ -4,14 +4,18 @@ import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.TipoPersona;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
 import ar.edu.utn.frbb.tup.service.ClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class ClienteInputProcessor extends BaseInputProcessor{
 
-    ClienteService clienteService = new ClienteService();
+    @Autowired
+    ClienteService clienteService;
 
     public void altaCliente() {
 
@@ -39,18 +43,22 @@ public class ClienteInputProcessor extends BaseInputProcessor{
         String banco = scanner.nextLine();
         cliente.setBanco(banco);
 
-        System.out.println("Ingrese la fecha de alta del cliente (Formato: YYYY-MM-DD):");
-        LocalDate fechaAlta = null;
+        System.out.println("Ingrese el dni del cliente:");
+        long dniCliente = Long.parseLong(scanner.nextLine());
+        cliente.setDni(dniCliente);
+
+        System.out.println("Ingrese la fecha de nacimiento del cliente (Formato: YYYY-MM-DD):");
+        LocalDate fechaNacimiento = null;
         boolean fechaValida = false;
         while (!fechaValida) {
             try {
-                fechaAlta = LocalDate.parse(scanner.nextLine());
+                fechaNacimiento = LocalDate.parse(scanner.nextLine());
                 fechaValida = true;
             } catch (RuntimeException e) {
                 System.out.println("Formato de fecha inválido. Ingrese la fecha en formato YYYY-MM-DD:");
             }
         }
-        cliente.setFechaAlta(fechaAlta);
+        cliente.setFechaNacimiento(fechaNacimiento);
 
         try {
             clienteService.darDeAltaCliente(cliente);
@@ -59,8 +67,6 @@ public class ClienteInputProcessor extends BaseInputProcessor{
             System.out.println();
             System.out.println(e.getMessage());
         }
-
         clearScreen();
-
     }
 }
