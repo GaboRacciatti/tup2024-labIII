@@ -37,5 +37,18 @@ public class MovimientoDao extends AbstractBaseDao{
         MovimientoEntity entity = new MovimientoEntity(movimiento);
         getInMemoryDatabase().put(entity.getId(), entity);
     }
-
+    public List<Movimiento> getMovimientosByCuenta(long numeroCuenta) {
+        List<Movimiento> movimientosDeCuenta = new ArrayList<>();
+        
+        for (Object object : getInMemoryDatabase().values()) {
+            MovimientoEntity movimiento = ((MovimientoEntity) object);
+            Movimiento mov = movimiento.toMovimiento();
+            if ((mov.getCuentaOrigen() != null && mov.getCuentaOrigen().getNumeroCuenta() == numeroCuenta) ||
+                (mov.getCuentaDestino() != null && mov.getCuentaDestino().getNumeroCuenta() == numeroCuenta)) {
+                movimientosDeCuenta.add(mov);
+            }
+        }
+        
+        return movimientosDeCuenta;
+    }
 }
