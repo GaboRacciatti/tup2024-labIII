@@ -59,7 +59,7 @@ public class MovimientoService {
 
         cuenta.agregarMovimiento(movimiento);
         cuentaService.update(cuenta);
-        movimientoDao.addMovimiento(movimiento);
+        movimientoDao.save(movimiento);
 
         return new DepositoResponseDto("Depósito exitoso", cuenta.getNumeroCuenta(), depositoDto.getMonto());
     }
@@ -90,7 +90,7 @@ public class MovimientoService {
 
         cuenta.agregarMovimiento(movimiento);
         cuentaService.update(cuenta);
-        movimientoDao.addMovimiento(movimiento);
+        movimientoDao.save(movimiento);
 
         return new RetiroResponseDto("Retiro exitoso", cuenta.getNumeroCuenta(), retiroDto.getMonto());
     }
@@ -195,7 +195,7 @@ public class MovimientoService {
     }   
 
     public void registrarMovimiento(Movimiento movimiento) {
-        movimientoDao.addMovimiento(movimiento);
+        movimientoDao.save(movimiento);
     }
 
 

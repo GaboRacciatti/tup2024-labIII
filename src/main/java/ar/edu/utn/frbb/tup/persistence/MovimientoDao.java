@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
+import ar.edu.utn.frbb.tup.persistence.entity.MovimientoEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +10,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MovimientoDao {
+public class MovimientoDao extends AbstractBaseDao{
+    @Override
+    protected String getEntityName() {
+        return "MOVIMIENTO";
+    }
+    
     private List<Movimiento> movimientos = new ArrayList<>();
 
-    public void addMovimiento(Movimiento movimiento) {
-        movimientos.add(movimiento);
-    }
 
     public List<Movimiento> findByNumeroCuenta(long numeroCuenta) {
         return movimientos.stream()
@@ -29,4 +32,10 @@ public class MovimientoDao {
             })
             .collect(Collectors.toList());
     }
+
+    public void save(Movimiento movimiento) {
+        MovimientoEntity entity = new MovimientoEntity(movimiento);
+        getInMemoryDatabase().put(entity.getId(), entity);
+    }
+
 }
