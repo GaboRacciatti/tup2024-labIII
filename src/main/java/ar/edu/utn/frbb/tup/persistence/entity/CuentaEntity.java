@@ -1,34 +1,46 @@
 package ar.edu.utn.frbb.tup.persistence.entity;
 
-import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
-import ar.edu.utn.frbb.tup.model.TipoCuenta;
-import ar.edu.utn.frbb.tup.persistence.ClienteDao;
+import ar.edu.utn.frbb.tup.model.enums.TipoBanco;
+import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-public class CuentaEntity extends BaseEntity{
+public class CuentaEntity extends BaseEntity {
     String nombre;
-    LocalDateTime fechaCreacion;
-    int balance;
+    LocalDate fechaCreacion;
+    double balance;
     String tipoCuenta;
     Long titular;
     long numeroCuenta;
+    private TipoMoneda moneda;
+    private final String cbu;
+    private TipoBanco tipoBanco;
+
 
     public CuentaEntity(Cuenta cuenta) {
         super(cuenta.getNumeroCuenta());
+        this.numeroCuenta = cuenta.getNumeroCuenta(); 
         this.balance = cuenta.getBalance();
+        this.cbu = cuenta.getCbu();
         this.tipoCuenta = cuenta.getTipoCuenta().toString();
-        this.titular = cuenta.getTitular().getDni();
+        this.tipoBanco = cuenta.getTipoBanco();
+        this.titular = cuenta.getDniTitular();
         this.fechaCreacion = cuenta.getFechaCreacion();
+        this.moneda = cuenta.getMoneda(); 
     }
 
     public Cuenta toCuenta() {
         Cuenta cuenta = new Cuenta();
+        cuenta.setNumeroCuenta(this.numeroCuenta); 
         cuenta.setBalance(this.balance);
-        cuenta.setNumeroCuenta(this.numeroCuenta);
         cuenta.setTipoCuenta(TipoCuenta.valueOf(this.tipoCuenta));
         cuenta.setFechaCreacion(this.fechaCreacion);
+        cuenta.setDniTitular(this.titular); 
+        cuenta.setTipoBanco(this.tipoBanco);
+        cuenta.setCbu(this.cbu);
+        cuenta.setMoneda(this.getMoneda());
         return cuenta;
     }
 
@@ -36,23 +48,35 @@ public class CuentaEntity extends BaseEntity{
         return nombre;
     }
 
+    public String getCbu() {
+        return cbu;
+    }
+
+    public TipoBanco getTipoBanco() {
+        return tipoBanco;
+    }
+
+    public void setTipoBanco(TipoBanco tipoBanco) {
+        this.tipoBanco = tipoBanco;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public LocalDateTime getFechaCreacion() {
+    public LocalDate getFechaCreacion() {
         return fechaCreacion;
     }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+    public void setFechaCreacion(LocalDate fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
@@ -78,5 +102,13 @@ public class CuentaEntity extends BaseEntity{
 
     public void setNumeroCuenta(long numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
+    }
+
+    public TipoMoneda getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(TipoMoneda moneda) {
+        this.moneda = moneda;
     }
 }

@@ -1,6 +1,6 @@
-package ar.edu.utn.frbb.tup.controller;
+package ar.edu.utn.frbb.tup.controller.dto;
 
-public class ClienteDto extends PersonaDto{
+public class ClienteDto extends PersonaDto {
     private String tipoPersona;
     private String banco;
 
@@ -19,4 +19,7 @@ public class ClienteDto extends PersonaDto{
     public void setBanco(String banco) {
         this.banco = banco;
     }
+
+
 }
+

@@ -1,7 +1,6 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Cuenta;
-import ar.edu.utn.frbb.tup.persistence.entity.ClienteEntity;
 import ar.edu.utn.frbb.tup.persistence.entity.CuentaEntity;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +25,15 @@ public class CuentaDao  extends AbstractBaseDao{
         }
         return ((CuentaEntity) getInMemoryDatabase().get(id)).toCuenta();
     }
+    
+    public void update(Cuenta cuenta) {
+        CuentaEntity entity = new CuentaEntity(cuenta);
+        getInMemoryDatabase().put(entity.getId(), entity);
+    }
+
+    public void delete(long id) {
+        getInMemoryDatabase().remove(id);
+    }
 
     public List<Cuenta> getCuentasByCliente(long dni) {
         List<Cuenta> cuentasDelCliente = new ArrayList<>();
@@ -38,4 +46,24 @@ public class CuentaDao  extends AbstractBaseDao{
         }
         return cuentasDelCliente;
     }
+
+        public List<Cuenta> findAll() {
+            List<Cuenta> todasLasCuentas = new ArrayList<>();
+            for (Object object : getInMemoryDatabase().values()) {
+                CuentaEntity cuentaEntity = (CuentaEntity) object;
+                todasLasCuentas.add(cuentaEntity.toCuenta());
+            }
+            return todasLasCuentas;
+        }
+
+        public Cuenta findByNumeroCuenta(long numeroCuenta) {
+            for (Object object : getInMemoryDatabase().values()) {
+                CuentaEntity cuentaEntity = (CuentaEntity) object;
+                if (cuentaEntity.getNumeroCuenta() == numeroCuenta) {
+                    return cuentaEntity.toCuenta();
+                }
+            }
+            return null;
+        }
+
 }

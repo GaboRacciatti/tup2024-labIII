@@ -1,11 +1,15 @@
 package ar.edu.utn.frbb.tup.service;
 
-import ar.edu.utn.frbb.tup.controller.ClienteDto;
+import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteNotFoundException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,14 +38,13 @@ public class ClienteService {
 
     public void agregarCuenta(Cuenta cuenta, long dniTitular) throws TipoCuentaAlreadyExistsException {
         Cliente titular = buscarClientePorDni(dniTitular);
-        cuenta.setTitular(titular);
+        cuenta.setDniTitular(titular.getDni());
         if (titular.tieneCuenta(cuenta.getTipoCuenta(), cuenta.getMoneda())) {
             throw new TipoCuentaAlreadyExistsException("El cliente ya posee una cuenta de ese tipo y moneda");
         }
         titular.addCuenta(cuenta);
         clienteDao.save(titular);
     }
-
     public Cliente buscarClientePorDni(long dni) {
         Cliente cliente = clienteDao.find(dni, true);
         if(cliente == null) {
@@ -49,4 +52,38 @@ public class ClienteService {
         }
         return cliente;
     }
+
+    public Cliente eliminarClientePorDni(long dni) throws ClienteNotFoundException {
+        Cliente cliente = clienteDao.find(dni, true);
+        if (cliente == null) {
+            throw new ClienteNotFoundException("El cliente buscado no existe");
+        }
+        clienteDao.delete(cliente);
+        return cliente;
+    }
+
+    public Cliente editarClientPorDni(long dni, ClienteDto clienteDto) throws ClienteNotFoundException {
+        Cliente cliente = clienteDao.find(dni, true);
+        if (cliente == null) {
+            throw new ClienteNotFoundException("El cliente buscado no existe");
+        }
+
+        if (clienteDto.getDireccion() != null && !clienteDto.getDireccion().isEmpty()) {
+            cliente.setDireccion(clienteDto.getDireccion());
+        }
+
+        if (clienteDto.getTelefono() != null && !clienteDto.getTelefono().isEmpty()) {
+            cliente.setTelefono(clienteDto.getTelefono());
+        }
+
+        return cliente;
+    }
+
+    public List<Cliente> obtenerTodosLosClientes() {
+        if (clienteDao == null) {
+            throw new IllegalStateException("No hay clientes en la base de datos");
+        }
+        return clienteDao.findAll();
+    }
 }
+

@@ -1,29 +1,36 @@
 package ar.edu.utn.frbb.tup.model;
 
-import ar.edu.utn.frbb.tup.controller.ClienteDto;
-
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Cliente extends Persona{
+import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
+import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
+import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.enums.TipoPersona;
+
+public class Cliente extends Persona {
 
     private TipoPersona tipoPersona;
-    private String banco;
     private LocalDate fechaAlta;
-    private Set<Cuenta> cuentas = new HashSet<>();
+    private List<Cuenta> cuentas = new ArrayList<>();
 
-    public Cliente() {
-        super();
-    }
+    public Cliente(){};
+
     public Cliente(ClienteDto clienteDto) {
-        super(clienteDto.getDni(), clienteDto.getApellido(), clienteDto.getNombre(), clienteDto.getFechaNacimiento());
-        this.tipoPersona = TipoPersona.valueOf(clienteDto.getTipoPersona());
-        fechaAlta = LocalDate.now();
-        banco = clienteDto.getBanco();
+        super(clienteDto.getDni(), 
+              clienteDto.getApellido(), 
+              clienteDto.getNombre(), 
+              LocalDate.parse(clienteDto.getFechaNacimiento()), 
+              clienteDto.getTelefono(), 
+              clienteDto.getDireccion());
+              
+        this.tipoPersona = TipoPersona.fromString(clienteDto.getTipoPersona());
+        this.fechaAlta = LocalDate.now();
     }
+    
+    
 
     public TipoPersona getTipoPersona() {
         return tipoPersona;
@@ -33,13 +40,7 @@ public class Cliente extends Persona{
         this.tipoPersona = tipoPersona;
     }
 
-    public String getBanco() {
-        return banco;
-    }
 
-    public void setBanco(String banco) {
-        this.banco = banco;
-    }
 
     public LocalDate getFechaAlta() {
         return fechaAlta;
@@ -48,33 +49,38 @@ public class Cliente extends Persona{
     public void setFechaAlta(LocalDate fechaAlta) {
         this.fechaAlta = fechaAlta;
     }
+    public int getEdad() {
+        return Period.between(this.getFechaNacimiento(), LocalDate.now()).getYears();
+    }
 
-    public Set<Cuenta> getCuentas() {
+    public List<Cuenta> getCuentas() {
         return cuentas;
+    }
+
+    public void setCuentas(List<Cuenta> cuentas) {
+        this.cuentas = cuentas;
     }
 
     public void addCuenta(Cuenta cuenta) {
         this.cuentas.add(cuenta);
-        cuenta.setTitular(this);
     }
 
     public boolean tieneCuenta(TipoCuenta tipoCuenta, TipoMoneda moneda) {
-        for (Cuenta cuenta:
-                cuentas) {
-            if (tipoCuenta.equals(cuenta.getTipoCuenta()) && moneda.equals(cuenta.getMoneda())) {
-                return true;
-            }
-        }
-        return false;
+        return cuentas.stream()
+            .anyMatch(cuenta -> cuenta.getTipoCuenta().equals(tipoCuenta) && cuenta.getMoneda().equals(moneda));
     }
+
+
 
     @Override
     public String toString() {
-        return "Cliente{" +
-                "tipoPersona=" + tipoPersona +
-                ", banco='" + banco + '\'' +
-                ", fechaAlta=" + fechaAlta +
-                ", cuentas=" + cuentas +
-                '}';
+        return "\n ///// Cliente ///// \n" +
+                " dni: " + getDni() +
+                "\n nombre: " + getNombre() + 
+                "\n apellido: " + getApellido() + 
+                "\n tipoPersona: " + getTipoPersona() +
+                "\n fechaAlta: " + getFechaAlta() +
+                "\n edad: " + getEdad() +
+                "\n cuentas: " + getCuentas();
     }
 }
