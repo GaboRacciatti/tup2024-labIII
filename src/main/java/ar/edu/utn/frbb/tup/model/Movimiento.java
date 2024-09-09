@@ -1,51 +1,70 @@
 package ar.edu.utn.frbb.tup.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
+import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
 
 public class Movimiento {
-    private static long contadorid = 1;
-    private long id;
-    private LocalDate fecha;
+
+    @JsonView(Views.Public.class)
+    private TipoMovimiento tipoMovimiento;
+
+    @JsonView(Views.Public.class)
+    private Double monto;
+
+    @JsonView(Views.Public.class)
+    private LocalDateTime fecha;
+
+    @JsonView(Views.Public.class)
+    private TipoMoneda tipoMoneda;
+
+    @JsonView(Views.Transferencia.class)
+    private long cuentaOrigen;
+
+    @JsonView(Views.Transferencia.class)
+    private long cuentaDestino;
+
     private LocalTime hora;
     private String descripcion;
     private TipoMovimiento tipo;
-    private double monto;
-    private Cuenta cuentaOrigen; 
-    private Cuenta cuentaDestino; 
     private TipoMoneda moneda;
     public Movimiento() {}
 
-    public Movimiento(long id, LocalDate fecha, LocalTime hora, String descripcion, TipoMovimiento tipo, double monto, TipoMoneda moneda) {
-        this.id = contadorid++;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.descripcion = descripcion;
-        this.tipo = tipo;
-        this.monto = monto;
-        this.moneda = moneda;
+    public Movimiento(MovimientosRetiroDepositoDto movimientosSimplesDto){
+        this.fecha = LocalDateTime.now();
+        this.monto = movimientosSimplesDto.getMonto();
+        this.tipoMoneda = movimientosSimplesDto.getTipoMoneda();
     }
 
-    public Movimiento(long id, LocalDate fecha, LocalTime hora, String descripcion, TipoMovimiento tipo, double monto, Cuenta cuentaOrigen, Cuenta cuentaDestino, TipoMoneda moneda) {
-        this.id = contadorid++;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.descripcion = descripcion;
-        this.tipo = tipo;
-        this.monto = monto;
-        this.cuentaOrigen = cuentaOrigen;
-        this.cuentaDestino = cuentaDestino;
-        this.moneda = moneda;
+    public Movimiento(MovimientoDto movimientosDto) {
+        this.cuentaDestino = movimientosDto.getCuentaDestino();
+        this.cuentaOrigen = movimientosDto.getCuentaOrigen();
+        this.fecha = LocalDateTime.now();
+        this.monto = movimientosDto.getMonto();
+        this.tipoMoneda = movimientosDto.getTipoMoneda();
     }
 
-    public LocalDate getFecha() {
+    @Override
+    public String toString() {
+            return "\n Tipo de Operacion: " + getTipoMovimiento() + "\n Monto: " + getMonto() + "\n Fecha: " + getFecha();
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(moneda);
+    }
+
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 
@@ -64,28 +83,19 @@ public class Movimiento {
     public void setTipo(TipoMovimiento tipo) {
         this.tipo = tipo;
     }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Cuenta getCuentaOrigen() {
+    public long getCuentaOrigen() {
         return cuentaOrigen;
     }
 
-    public void setCuentaOrigen(Cuenta cuentaOrigen) {
+    public void setCuentaOrigen(long cuentaOrigen) {
         this.cuentaOrigen = cuentaOrigen;
     }
 
-    public Cuenta getCuentaDestino() {
+    public long getCuentaDestino() {
         return cuentaDestino;
     }
 
-    public void setCuentaDestino(Cuenta cuentaDestino) {
+    public void setCuentaDestino(long cuentaDestino) {
         this.cuentaDestino = cuentaDestino;
     }
 
@@ -105,11 +115,11 @@ public class Movimiento {
         this.tipo = tipo;
     }
 
-    public LocalDate getFechaHora() {
+    public LocalDateTime getFechaHora() {
         return fecha;
     }
 
-    public void setFechaHora(LocalDate fecha) {
+    public void setFechaHora(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 

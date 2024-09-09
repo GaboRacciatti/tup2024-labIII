@@ -1,5 +1,7 @@
 package ar.edu.utn.frbb.tup.controller.dto;
 
+import java.util.LinkedHashSet;
+
 import ar.edu.utn.frbb.tup.model.enums.TipoBanco;
 
 public class CuentaDto {
@@ -11,7 +13,7 @@ public class CuentaDto {
     private double balance;
     private String cbu;
     private TipoBanco tipoBanco;
-    private List<MovimientoDto> movimientos;
+    private LinkedHashSet<MovimientoDto> movimientos;
     
     public long getDniTitular() {
         return dniTitular;
@@ -67,11 +69,11 @@ public class CuentaDto {
         this.tipoBanco = tipoBanco;
     }
 
-    public List<MovimientoDto> getMovimientos() {
+    public LinkedHashSet<MovimientoDto> getMovimientos() {
         return movimientos;
     }
 
-    public void setMovimientos(List<MovimientoDto> movimientos) {
+    public void setMovimientos(LinkedHashSet<MovimientoDto> movimientos) {
         this.movimientos = movimientos;
     }
 

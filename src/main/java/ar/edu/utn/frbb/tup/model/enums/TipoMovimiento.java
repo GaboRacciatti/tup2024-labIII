@@ -6,7 +6,8 @@ public enum TipoMovimiento {
     TRANSFERENCIA_ENTRANTE("TE"),
     TRANSFERENCIA_SALIENTE("TS"),
     CREDITO("C"),
-    DEBITO("D");
+    DEBITO("D"), 
+    TRANSFERENCIA ("T");
 
     private final String descripcion;
 

@@ -69,14 +69,7 @@ public class CuentaService {
     
         return cuenta;
     }
-    
-    public void eliminarCuenta(long numeroCuenta) throws CuentaNotFoundException {
-        Cuenta cuenta = cuentaDao.find(numeroCuenta);
-        if (cuenta == null) {
-            throw new CuentaNotFoundException("La cuenta no existe.");
-        }
-        cuentaDao.delete(numeroCuenta);
-    }
+
     
     public Cuenta update(Cuenta cuenta) {
         cuentaDao.update(cuenta);

@@ -1,43 +1,30 @@
 package ar.edu.utn.frbb.tup.controller.dto;
 
-import ar.edu.utn.frbb.tup.model.Cuenta;
-import ar.edu.utn.frbb.tup.model.Transferencia;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
-import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
-import ar.edu.utn.frbb.tup.persistence.CuentaDao;
-
 
 public class MovimientoDto {
     private Double monto;
-    private Cuenta cuentaOrigen;
-    private Cuenta cuentaDestino;
+    private long cuentaOrigen;
+    private long cuentaDestino;
     private TipoMoneda tipoMoneda;
-    private TipoMovimiento tipoMovimiento;
 
-    public MovimientoDto(Cuenta cuentaDestino, Cuenta cuentaOrigen, Double monto, TipoMoneda tipoMoneda, TipoMovimiento tipoMovimiento) {
+    public MovimientoDto(long cuentaDestino, long cuentaOrigen, Double monto, TipoMoneda tipoMoneda) {
         this.cuentaDestino = cuentaDestino;
         this.cuentaOrigen = cuentaOrigen;
         this.monto = monto;
         this.tipoMoneda = tipoMoneda;
-        this.tipoMovimiento = tipoMovimiento;
     }
 
-    public MovimientoDto(Transferencia transferencia, CuentaDao cuentaDao) {
-        this.monto = transferencia.getMonto();
-        this.cuentaOrigen = cuentaDao.find(transferencia.getCuentaOrigen()); 
-        this.cuentaDestino = cuentaDao.find(transferencia.getCuentaDestino()); 
-        this.tipoMoneda = TipoMoneda.fromString(transferencia.getMoneda()); 
-    }
 
     public Double getMonto() {
         return monto;
     }
 
-    public Cuenta getCuentaDestino() {
+    public long getCuentaDestino() {
         return cuentaDestino;
     }
 
-    public Cuenta getCuentaOrigen() {
+    public long getCuentaOrigen() {
         return cuentaOrigen;
     }
 
@@ -49,11 +36,11 @@ public class MovimientoDto {
         this.monto = monto;
     }
 
-    public void setCuentaOrigen(Cuenta cuentaOrigen) {
+    public void setCuentaOrigen(long cuentaOrigen) {
         this.cuentaOrigen = cuentaOrigen;
     }
 
-    public void setCuentaDestino(Cuenta cuentaDestino) {
+    public void setCuentaDestino(long cuentaDestino) {
         this.cuentaDestino = cuentaDestino;
     }
 
@@ -61,11 +48,4 @@ public class MovimientoDto {
         this.tipoMoneda = tipoMoneda;
     }
 
-    public TipoMovimiento getTipoMovimiento() {
-        return tipoMovimiento;
-    }
-
-    public void setTipoMovimiento(TipoMovimiento tipoMovimiento) {
-        this.tipoMovimiento = tipoMovimiento;
-    }
 }

@@ -1,55 +1,72 @@
 package ar.edu.utn.frbb.tup.controller;
 
-import ar.edu.utn.frbb.tup.controller.dto.TransferenciaDto;
-import ar.edu.utn.frbb.tup.controller.dto.DepositoDto;
-import ar.edu.utn.frbb.tup.controller.dto.DepositoResponseDto;
-import ar.edu.utn.frbb.tup.controller.dto.RetiroDto;
-import ar.edu.utn.frbb.tup.controller.dto.RetiroResponseDto;
-import ar.edu.utn.frbb.tup.controller.dto.TransaccionDto;
-import ar.edu.utn.frbb.tup.controller.dto.TransaccionesResponseDto;
+import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
+import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
+import ar.edu.utn.frbb.tup.service.CuentaService;
 import ar.edu.utn.frbb.tup.service.MovimientoService;
-import ar.edu.utn.frbb.tup.controller.dto.TransferenciaResponseDto;
-import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
-import ar.edu.utn.frbb.tup.model.exception.NoAlcanzaException;
-
-import java.util.List;
-
+import ar.edu.utn.frbb.tup.controller.validator.MovimientosValidator;
+import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.model.Movimiento;
+import ar.edu.utn.frbb.tup.model.Views;
+import ar.edu.utn.frbb.tup.model.exception.*;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedList;
 
 @RestController
 @RequestMapping("/api")
 public class MovimientoController {
 
-    private final MovimientoService movimientoService;
+    @Autowired
+    private MovimientoService movimientoService;
 
     @Autowired
-    public MovimientoController(MovimientoService movimientoService) {
-        this.movimientoService = movimientoService;
-    }
-    @PostMapping("/transfer")
-    public ResponseEntity<TransferenciaResponseDto> realizarTransferencia(@RequestBody TransferenciaDto transferenciaDto) throws CantidadNegativaException, NoAlcanzaException {
-        TransferenciaResponseDto response = movimientoService.realizarTransferencia(transferenciaDto);
-        return ResponseEntity.ok(response);
-    }
+    CuentaService cuentaService;
 
+    @Autowired
+    private MovimientosValidator movimientoValidator;
+
+    @JsonView(Views.Public.class)    
     @PostMapping("/deposito")
-    public ResponseEntity<DepositoResponseDto> realizarDeposito(@RequestBody DepositoDto depositoDto) throws CantidadNegativaException {
-        DepositoResponseDto response = movimientoService.realizarDeposito(depositoDto);
-        return ResponseEntity.ok(response);
+    public Movimiento deposito(@RequestBody MovimientosRetiroDepositoDto movimientosSimplesDto) 
+            throws CuentaNotFoundException, DiferenteMonedaException, CantidadNegativaException {
+        
+        movimientoValidator.validateSimples(movimientosSimplesDto);
+        movimientoService.realizarDeposito(movimientosSimplesDto);
+        Cuenta cuenta = cuentaService.find(movimientosSimplesDto.getNumeroCuenta());
+        return cuenta.getMovimientos().getLast(); 
     }
 
+    @JsonView(Views.Public.class)
     @PostMapping("/retiro")
-    public ResponseEntity<RetiroResponseDto> realizarRetiro(@RequestBody RetiroDto retiroDto) throws CantidadNegativaException, NoAlcanzaException {
-        RetiroResponseDto response = movimientoService.realizarRetiro(retiroDto);
-        return ResponseEntity.ok(response);
+    public Movimiento retiro(@RequestBody MovimientosRetiroDepositoDto movimientosSimplesDto)
+            throws CuentaNotFoundException, CuentaSinFondosException, CantidadNegativaException, NoAlcanzaException, DiferenteMonedaException {
+        
+        movimientoValidator.validateSimples(movimientosSimplesDto);
+        movimientoService.realizarRetiro(movimientosSimplesDto);
+        Cuenta cuenta = cuentaService.find(movimientosSimplesDto.getNumeroCuenta());
+        return cuenta.getMovimientos().getLast();
     }
-    
-    @GetMapping("/{numeroCuenta}/movimientos")
-    public ResponseEntity<TransaccionesResponseDto> obtenerMovimientos(@PathVariable long numeroCuenta) {
-    List<TransaccionDto> transacciones = movimientoService.obtenerHistorialTransacciones(numeroCuenta);
-    TransaccionesResponseDto response = new TransaccionesResponseDto(numeroCuenta, transacciones);
-    return ResponseEntity.ok(response);
+
+    @JsonView(Views.Public.class)
+    @PostMapping("/transferencia")
+    public Movimiento transferencia(@RequestBody MovimientoDto movimientosDto) 
+            throws CuentaNotFoundException, CuentaSinFondosException, DiferenteMonedaException, CantidadNegativaException {
+        
+        movimientoValidator.validate(movimientosDto);
+        movimientoService.transferir(movimientosDto);
+        Cuenta cuenta = cuentaService.find(movimientosDto.getCuentaOrigen());
+        return cuenta.getMovimientos().getLast();
+    }
+
+    @JsonView(Views.Public.class)
+    @GetMapping("/{numeroCuenta}")
+    public LinkedList<Movimiento> obtenerMovimientos(@PathVariable long numeroCuenta) 
+            throws CuentaNotFoundException {
+        
+        Cuenta cuenta = cuentaService.find(numeroCuenta);
+        return cuenta.getMovimientos();
     }
 }

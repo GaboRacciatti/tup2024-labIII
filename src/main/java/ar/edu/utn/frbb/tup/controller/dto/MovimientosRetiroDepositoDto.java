@@ -1,11 +1,13 @@
 package ar.edu.utn.frbb.tup.controller.dto;
-//DTO para realizar movimientos de deposito y retiro sin la necesidad de incluir en el JSON cuentaOrigen y cuentaDestino
+
+import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
+
 public class MovimientosRetiroDepositoDto { 
     private Double monto;
-    private String tipoMoneda;
+    private TipoMoneda tipoMoneda;
     private long numeroCuenta;
 
-    public MovimientosRetiroDepositoDto(Double monto, long numeroCuenta, String tipoMoneda) {
+    public MovimientosRetiroDepositoDto(Double monto, long numeroCuenta, TipoMoneda tipoMoneda) {
         this.monto = monto;
         this.numeroCuenta = numeroCuenta;
         this.tipoMoneda = tipoMoneda;
@@ -15,7 +17,7 @@ public class MovimientosRetiroDepositoDto {
         return monto;
     }
 
-    public String getTipoMoneda() {
+    public TipoMoneda getTipoMoneda() {
         return tipoMoneda;
     }
 
