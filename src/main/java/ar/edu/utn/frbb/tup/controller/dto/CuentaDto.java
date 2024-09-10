@@ -14,6 +14,7 @@ public class CuentaDto {
     private String cbu;
     private TipoBanco tipoBanco;
     private LinkedHashSet<MovimientoDto> movimientos;
+
     
     public long getDniTitular() {
         return dniTitular;

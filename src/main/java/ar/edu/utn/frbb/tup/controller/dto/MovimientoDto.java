@@ -1,20 +1,21 @@
 package ar.edu.utn.frbb.tup.controller.dto;
 
-import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
 
 public class MovimientoDto {
     private Double monto;
     private long cuentaOrigen;
     private long cuentaDestino;
-    private TipoMoneda tipoMoneda;
+    private String tipoMoneda;
+    private TipoMovimiento tipoMovimiento;
 
-    public MovimientoDto(long cuentaDestino, long cuentaOrigen, Double monto, TipoMoneda tipoMoneda) {
+    public MovimientoDto(long cuentaDestino, long cuentaOrigen, Double monto, String tipoMoneda, TipoMovimiento tipoMovimiento) {
         this.cuentaDestino = cuentaDestino;
         this.cuentaOrigen = cuentaOrigen;
         this.monto = monto;
         this.tipoMoneda = tipoMoneda;
+        this.tipoMovimiento = tipoMovimiento;
     }
-
 
     public Double getMonto() {
         return monto;
@@ -28,7 +29,7 @@ public class MovimientoDto {
         return cuentaOrigen;
     }
 
-    public TipoMoneda getTipoMoneda() {
+    public String getTipoMoneda() {
         return tipoMoneda;
     }
 
@@ -40,12 +41,19 @@ public class MovimientoDto {
         this.cuentaOrigen = cuentaOrigen;
     }
 
+    public TipoMovimiento getTipoMovimiento() {
+        return tipoMovimiento;
+    }
+
+    public void setTipoMovimiento(TipoMovimiento tipoMovimiento) {
+        this.tipoMovimiento = tipoMovimiento;
+    }
+
     public void setCuentaDestino(long cuentaDestino) {
         this.cuentaDestino = cuentaDestino;
     }
 
-    public void setTipoMoneda(TipoMoneda tipoMoneda) {
+    public void setTipoMoneda(String tipoMoneda) {
         this.tipoMoneda = tipoMoneda;
     }
-
 }

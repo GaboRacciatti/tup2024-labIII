@@ -1,6 +1,12 @@
 package ar.edu.utn.frbb.tup.controller.handler;
 
+import ar.edu.utn.frbb.tup.model.exception.CuentaNotFoundException;
+import ar.edu.utn.frbb.tup.model.exception.CuentaSinFondosException;
+import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
+import ar.edu.utn.frbb.tup.model.exception.DiferenteMonedaException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNoSoportadaException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -37,7 +43,14 @@ public class TupResponseEntityExceptionHandler extends ResponseEntityExceptionHa
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-
+    @ExceptionHandler({DiferenteMonedaException.class, DatosMalIngresadosException.class, TipoCuentaNoSoportadaException.class, CuentaNotFoundException.class, CuentaSinFondosException.class})
+    protected ResponseEntity<Object> handleNoSoportada(
+            Exception ex, WebRequest request) {
+        CustomApiError error = new CustomApiError();
+        error.setErrorMessage(ex.getMessage());
+        return handleExceptionInternal(ex, error,
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

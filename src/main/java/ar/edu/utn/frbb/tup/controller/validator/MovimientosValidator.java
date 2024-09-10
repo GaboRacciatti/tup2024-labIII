@@ -2,34 +2,51 @@ package ar.edu.utn.frbb.tup.controller.validator;
 
 import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
 import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
-import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
+import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
+import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
 import ar.edu.utn.frbb.tup.model.exception.DiferenteMonedaException;
+import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNoSoportadaException;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class MovimientosValidator {
 
-    public void validateSimples(MovimientosRetiroDepositoDto movimientosRetiroDepositoDto)
-            throws CantidadNegativaException, DiferenteMonedaException {
+  public void validateMovimientos(MovimientosRetiroDepositoDto RetiroDepositoDto) throws DatosMalIngresadosException, DiferenteMonedaException {
+    if (RetiroDepositoDto == null) {
+      throw new DatosMalIngresadosException("El movimiento no puede ser nulo");
+    }
+    validateMonto(RetiroDepositoDto.getMonto());
+    validateTipoMoneda(RetiroDepositoDto.getTipoMoneda());
+  }
 
-        if (movimientosRetiroDepositoDto.getMonto() == null || movimientosRetiroDepositoDto.getMonto() <= 0) {
-            throw new CantidadNegativaException("El monto no puede ser negativo o nulo.");
-        }
-
-        if (movimientosRetiroDepositoDto.getTipoMoneda() == null) {
-            throw new DiferenteMonedaException("El tipo de moneda no puede ser nulo.");
-        }
+  public void validateMovimientosTransferencias(MovimientoDto movimientosTransferenciasDto)
+          throws TipoCuentaNoSoportadaException, DatosMalIngresadosException, DiferenteMonedaException {
+    if (movimientosTransferenciasDto == null) {
+      throw new DatosMalIngresadosException("La transferencia no puede ser nula");
     }
 
-    public void validate(MovimientoDto movimientoDto)
-            throws CantidadNegativaException, DiferenteMonedaException {
+    validateMonto(movimientosTransferenciasDto.getMonto());
+    validateTipoMoneda(movimientosTransferenciasDto.getTipoMoneda());
 
-        if (movimientoDto.getMonto() == null || movimientoDto.getMonto() <= 0) {
-            throw new CantidadNegativaException("El monto no puede ser negativo o nulo.");
-        }
-
-        if (movimientoDto.getTipoMoneda() == null) {
-            throw new DiferenteMonedaException("El tipo de moneda no puede ser nulo.");
-        }
+    if (movimientosTransferenciasDto.getCuentaOrigen() == movimientosTransferenciasDto.getCuentaDestino()) {
+      throw new TipoCuentaNoSoportadaException("La cuenta origen y destino no pueden ser la misma");
     }
+  }
+
+  private void validateMonto(Double monto) throws DatosMalIngresadosException {
+    if (monto == null || monto <= 0.0) {
+      throw new DatosMalIngresadosException("El monto debe ser mayor que cero");
+    }
+  }
+
+  private void validateTipoMoneda(String tipoMoneda) throws DatosMalIngresadosException {
+    try {
+        TipoMoneda.fromString(tipoMoneda);
+    } catch (IllegalArgumentException e) {
+        throw new DatosMalIngresadosException("Tipo de moneda no válido: " + tipoMoneda);
+    }
+ }
+
+
 }

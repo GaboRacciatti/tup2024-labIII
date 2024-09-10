@@ -38,7 +38,7 @@ public class CuentaService {
         if (!tipoCuentaEstaSoportada(cuenta)) {
             throw new TipoCuentaNoSoportadaException("El tipo de cuenta " + cuenta.getTipoCuenta() + " no está soportado.");
         }
-
+        
         clienteService.agregarCuenta(cuenta, cuentaDto.getDniTitular());
         cuentaDao.save(cuenta);
         return cuenta;
@@ -79,4 +79,5 @@ public class CuentaService {
     public List<Cuenta> obtenerTodasLasCuentas() {
         return cuentaDao.findAll();
     }
+
 }

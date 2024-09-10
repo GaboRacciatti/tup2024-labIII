@@ -7,15 +7,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BanelcoService {
-    private static final Random random = new Random();
-    // Simulamos de manera random si la cuenta existe o no
+    private final Random random = new Random();
 
-    public Boolean transferenciaBanelco(/*long cuentaOrigen, long cuentaDestino, double monto*/){
-        // Hacemos que alla un 70% de probablidad de que la cuenta simulada exista
-
-        int probabilidad = random.nextInt(100);
-        System.out.println(probabilidad);
-        return probabilidad < 70;  // Retorna el numero random si es menor a 70
+    public boolean realizarTransferenciaBanelco(long numeroCuentaOrigen, long numeroCuentaDestino, double monto) {
+        return random.nextDouble() < 0.75;
     }
 }
 

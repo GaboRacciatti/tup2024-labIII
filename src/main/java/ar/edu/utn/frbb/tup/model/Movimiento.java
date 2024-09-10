@@ -4,43 +4,31 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
 import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Movimiento {
 
-    @JsonView(Views.Public.class)
-    private TipoMovimiento tipoMovimiento;
+    LocalTime hora;
+    String descripcion;
+    TipoMovimiento tipo;
+    TipoMoneda moneda;
+    long cuentaDestino;
+    long cuentaOrigen;    
+    LocalDateTime fecha;
+    Double monto;
 
-    @JsonView(Views.Public.class)
-    private Double monto;
-
-    @JsonView(Views.Public.class)
-    private LocalDateTime fecha;
-
-    @JsonView(Views.Public.class)
-    private TipoMoneda tipoMoneda;
-
-    @JsonView(Views.Transferencia.class)
-    private long cuentaOrigen;
-
-    @JsonView(Views.Transferencia.class)
-    private long cuentaDestino;
-
-    private LocalTime hora;
-    private String descripcion;
-    private TipoMovimiento tipo;
-    private TipoMoneda moneda;
     public Movimiento() {}
 
     public Movimiento(MovimientosRetiroDepositoDto movimientosSimplesDto){
         this.fecha = LocalDateTime.now();
         this.monto = movimientosSimplesDto.getMonto();
-        this.tipoMoneda = movimientosSimplesDto.getTipoMoneda();
+        this.moneda = TipoMoneda.fromString(movimientosSimplesDto.getTipoMoneda());
+        this.tipo = movimientosSimplesDto.getTipoMovimiento();
     }
 
     public Movimiento(MovimientoDto movimientosDto) {
@@ -48,7 +36,8 @@ public class Movimiento {
         this.cuentaOrigen = movimientosDto.getCuentaOrigen();
         this.fecha = LocalDateTime.now();
         this.monto = movimientosDto.getMonto();
-        this.tipoMoneda = movimientosDto.getTipoMoneda();
+        this.moneda = TipoMoneda.fromString(movimientosDto.getTipoMoneda());
+        this.tipo = movimientosDto.getTipoMovimiento();
     }
 
     @Override
@@ -58,6 +47,17 @@ public class Movimiento {
     @Override
     public int hashCode() {
         return Objects.hashCode(moneda);
+    }
+    public TipoMoneda getTipoMoneda() {
+        return moneda;
+    }
+
+    public void setTipoMoneda(TipoMoneda moneda) {
+        this.moneda = moneda;
+    }
+
+    public void setMonto(Double monto) {
+        this.monto = monto;
     }
 
     public LocalDateTime getFecha() {

@@ -10,9 +10,6 @@ import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
 
-
-
-
 public class Cuenta {
     private static long contadorCuentas = 1;
     private long numeroCuenta;
@@ -22,9 +19,10 @@ public class Cuenta {
     TipoCuenta tipoCuenta;
     private TipoMoneda moneda;
     private long dniTitular;
-    LinkedList<Movimiento> movimientos; 
-
-    public Cuenta(){};
+    private LinkedList<Movimiento> movimientos = new LinkedList<>(); 
+    public Cuenta() {
+        this.movimientos = new LinkedList<>();
+    }
 
     public Cuenta(CuentaDto cuentaDto) {
         this.tipoCuenta = TipoCuenta.fromString(cuentaDto.getTipoCuenta());
@@ -32,10 +30,10 @@ public class Cuenta {
         this.fechaCreacion = LocalDate.now();
         this.balance = cuentaDto.getBalance();
         this.numeroCuenta = contadorCuentas++;
-        this.tipoBanco = (cuentaDto.getTipoBanco()); 
-        this.movimientos = new LinkedList<>(); 
-
+        this.tipoBanco = cuentaDto.getTipoBanco();
+        this.movimientos = new LinkedList<>();
     }
+
     @Override
     public String toString() {
         return "Cuenta{" +
@@ -50,6 +48,7 @@ public class Cuenta {
     public int hashCode() {
         return Objects.hashCode(moneda);
     }
+
     public static long getContadorCuentas() {
         return contadorCuentas;
     }
@@ -84,7 +83,6 @@ public class Cuenta {
         return this;
     }
 
-
     public LocalDate getFechaCreacion() {
         return fechaCreacion;
     }
@@ -98,10 +96,11 @@ public class Cuenta {
         return balance;
     }
 
-    public Cuenta setBalance(double balance2) {
-        this.balance = balance2;
+    public Cuenta setBalance(double balance) {
+        this.balance = balance;
         return this;
     }
+
     public LinkedList<Movimiento> getMovimientos() {
         return movimientos;
     }
@@ -111,9 +110,13 @@ public class Cuenta {
     }
 
     public void agregarMovimiento(Movimiento movimiento) {
-        this.movimientos.add(movimiento); 
+        this.movimientos.add(movimiento);
     }
 
+
+    public void setNumeroCuenta(long numeroCuenta) {
+        this.numeroCuenta = numeroCuenta;
+    }
 
     public void acreditarEnCuenta(double monto) throws CantidadNegativaException {
         if (monto < 0) {
@@ -121,14 +124,18 @@ public class Cuenta {
         }
         this.balance += monto;
     }
-
-    public void setNumeroCuenta(long numeroCuenta) {
-        this.numeroCuenta = numeroCuenta;
+    
+    public void forzarDebitoDeCuenta(double monto) throws CantidadNegativaException {
+        if (monto < 0) {
+            throw new CantidadNegativaException("No se puede debitar una cantidad negativa");
+        }
+        if (this.balance < monto) {
+            throw new CantidadNegativaException("Saldo insuficiente para el débito");
+        }
+        this.balance -= monto;
     }
-
-    public void forzaDebitoDeCuenta(int i) {
-        this.balance = this.balance - i;
-    }
+    
+    
 
     public long getNumeroCuenta() {
         return numeroCuenta;
@@ -141,6 +148,4 @@ public class Cuenta {
     public void setDniTitular(long dniTitular) {
         this.dniTitular = dniTitular;
     }
-
-
 }

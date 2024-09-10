@@ -38,7 +38,7 @@
     "cuentaOrigen": 1,
     "cuentaDestino": 2,
     "monto": 1000.0,
-    "moneda": "PESOS"
+    "tipoMoneda": "P"
 }
 //Deposito / Retiro
 {
