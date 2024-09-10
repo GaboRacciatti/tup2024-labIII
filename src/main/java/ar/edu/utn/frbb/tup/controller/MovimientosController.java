@@ -36,21 +36,12 @@ public class MovimientosController {
     private CuentaService cuentaService;
 
     @PostMapping("/transferencias")
-    public ResponseEntity<Movimiento> transferir(@RequestBody MovimientoDto transferenciaDto) {
-        try {
-            movimientosValidator.validateMovimientosTransferencias(transferenciaDto);
-            movimientosService.transferir(transferenciaDto);
-
-            Cuenta cuentaOrigen = cuentaService.find(transferenciaDto.getCuentaOrigen());
-            if (cuentaOrigen == null || cuentaOrigen.getMovimientos() == null || cuentaOrigen.getMovimientos().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-            Movimiento mov = cuentaOrigen.getMovimientos().getLast();
-            return ResponseEntity.ok(mov);
-        } catch (CuentaSinFondosException | TipoCuentaNoSoportadaException | DatosMalIngresadosException | DiferenteMonedaException | CuentaNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<MovimientoDto> transferir(@RequestBody MovimientoDto transferenciaDto) throws TipoCuentaNoSoportadaException, DatosMalIngresadosException, DiferenteMonedaException, CuentaNotFoundException, CuentaSinFondosException {
+        movimientosValidator.validateMovimientosTransferencias(transferenciaDto);
+        movimientosService.transferir(transferenciaDto);
+        transferenciaDto.setTipoMovimiento(TipoMovimiento.TRANSFERENCIA);
+        
+        return ResponseEntity.ok(transferenciaDto);
     }
 
 
