@@ -1,13 +1,11 @@
 package ar.edu.utn.frbb.tup.controller;
 
-import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
 import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
 import ar.edu.utn.frbb.tup.controller.validator.MovimientosValidator;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
-import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaNotFoundException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaSinFondosException;
 import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
@@ -16,11 +14,10 @@ import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNoSoportadaException;
 import ar.edu.utn.frbb.tup.service.CuentaService;
 import ar.edu.utn.frbb.tup.service.MovimientosService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/movimientos")
@@ -69,8 +66,9 @@ public class MovimientosController {
     
 
     @GetMapping("/{numeroCuenta}")
-    public LinkedList<Movimiento> getMovimientos(@PathVariable Long numeroCuenta) {
+    public List<Movimiento> getMovimientos(@PathVariable Long numeroCuenta) {
         Cuenta cuenta = cuentaService.find(numeroCuenta);
         return cuenta.getMovimientos();
     }
+
 }

@@ -56,4 +56,5 @@ public class MovimientoDto {
     public void setTipoMoneda(String tipoMoneda) {
         this.tipoMoneda = tipoMoneda;
     }
+
 }

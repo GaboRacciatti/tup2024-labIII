@@ -71,7 +71,7 @@ public class CuentaService {
     }
 
     
-    public Cuenta update(Cuenta cuenta) {
+    public Cuenta update(Cuenta cuenta) throws CuentaNotFoundException {
         cuentaDao.update(cuenta);
         return cuenta;
     }

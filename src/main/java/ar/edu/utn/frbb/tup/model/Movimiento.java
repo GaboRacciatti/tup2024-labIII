@@ -1,6 +1,6 @@
 package ar.edu.utn.frbb.tup.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -19,13 +19,13 @@ public class Movimiento {
     TipoMoneda moneda;
     long cuentaDestino;
     long cuentaOrigen;    
-    LocalDateTime fecha;
+    LocalDate fecha;
     Double monto;
 
     public Movimiento() {}
 
     public Movimiento(MovimientosRetiroDepositoDto movimientosSimplesDto){
-        this.fecha = LocalDateTime.now();
+        this.fecha = LocalDate.now();
         this.monto = movimientosSimplesDto.getMonto();
         this.moneda = TipoMoneda.fromString(movimientosSimplesDto.getTipoMoneda());
         this.tipo = movimientosSimplesDto.getTipoMovimiento();
@@ -34,7 +34,7 @@ public class Movimiento {
     public Movimiento(MovimientoDto movimientosDto) {
         this.cuentaDestino = movimientosDto.getCuentaDestino();
         this.cuentaOrigen = movimientosDto.getCuentaOrigen();
-        this.fecha = LocalDateTime.now();
+        this.fecha = LocalDate.now();
         this.monto = movimientosDto.getMonto();
         this.moneda = TipoMoneda.fromString(movimientosDto.getTipoMoneda());
         this.tipo = movimientosDto.getTipoMovimiento();
@@ -42,7 +42,7 @@ public class Movimiento {
 
     @Override
     public String toString() {
-            return "\n Tipo de Operacion: " + getTipoMovimiento() + "\n Monto: " + getMonto() + "\n Fecha: " + getFecha();
+            return "\n Tipo de Movimiento: " + getTipoMovimiento() + "\n Monto: " + getMonto() + "\n Fecha: " + getFecha();
     }
     @Override
     public int hashCode() {
@@ -60,11 +60,11 @@ public class Movimiento {
         this.monto = monto;
     }
 
-    public LocalDateTime getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDateTime fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
@@ -76,13 +76,6 @@ public class Movimiento {
         this.hora = hora;
     }
 
-    public TipoMovimiento getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoMovimiento tipo) {
-        this.tipo = tipo;
-    }
     public long getCuentaOrigen() {
         return cuentaOrigen;
     }
@@ -115,13 +108,6 @@ public class Movimiento {
         this.tipo = tipo;
     }
 
-    public LocalDateTime getFechaHora() {
-        return fecha;
-    }
-
-    public void setFechaHora(LocalDateTime fecha) {
-        this.fecha = fecha;
-    }
 
     public TipoMoneda getMoneda() {
         return moneda;
@@ -139,4 +125,5 @@ public class Movimiento {
         this.descripcion = descripcion;
     }
 
-}
+
+}    

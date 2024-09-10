@@ -19,8 +19,7 @@ public class CuentaEntity extends BaseEntity {
     long numeroCuenta;
     private TipoMoneda moneda;
     private TipoBanco tipoBanco;
-
-    LinkedList<Movimiento> movimientos = new LinkedList<>();
+    LinkedList<Movimiento> movimientos;
 
     public CuentaEntity(Cuenta cuenta) {
         super(cuenta.getNumeroCuenta());
@@ -34,6 +33,17 @@ public class CuentaEntity extends BaseEntity {
         this.moneda = cuenta.getMoneda(); 
     }
 
+
+    public void updateFromCuenta(Cuenta cuenta) {
+        this.balance = cuenta.getBalance();
+        this.moneda = cuenta.getMoneda();
+        this.titular = cuenta.getDniTitular();
+        this.movimientos = cuenta.getMovimientos();
+    }
+
+
+
+
     public Cuenta toCuenta() {
         Cuenta cuenta = new Cuenta();
         cuenta.setNumeroCuenta(this.numeroCuenta); 
@@ -42,7 +52,8 @@ public class CuentaEntity extends BaseEntity {
         cuenta.setFechaCreacion(this.fechaCreacion);
         cuenta.setDniTitular(this.titular); 
         cuenta.setTipoBanco(this.tipoBanco);
-        cuenta.setMoneda(this.getMoneda());
+        cuenta.setMoneda(this.moneda);
+        cuenta.setMovimientos(this.movimientos);
         return cuenta;
     }
 
@@ -67,12 +78,7 @@ public class CuentaEntity extends BaseEntity {
     public void setNumeroCuenta(long numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
     }
-
     public long getNumeroCuenta() {
         return numeroCuenta;
-    }
-
-    public TipoMoneda getMoneda() {
-        return moneda;
     }
 }

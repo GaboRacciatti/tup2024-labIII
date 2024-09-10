@@ -39,6 +39,9 @@ public class MovimientosService {
         }
 
         cuenta.setBalance(cuenta.getBalance() + deposito.getMonto());
+        Movimiento movimiento = new Movimiento(deposito);
+        movimiento.setTipoMovimiento(TipoMovimiento.DEPOSITO);
+        cuenta.agregarMovimiento(movimiento);
         cuentaDao.update(cuenta);
 
         return new Movimiento(deposito);
@@ -63,6 +66,9 @@ public class MovimientosService {
         }
 
         cuenta.setBalance(cuenta.getBalance() - retiro.getMonto());
+        Movimiento movimiento = new Movimiento(retiro);
+        movimiento.setTipoMovimiento(TipoMovimiento.RETIRO);
+        cuenta.agregarMovimiento(movimiento);
         cuentaDao.update(cuenta);
 
         return new Movimiento(retiro);
@@ -72,8 +78,7 @@ public class MovimientosService {
             throws CuentaNotFoundException, CuentaSinFondosException, DiferenteMonedaException {
         Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
         Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
-        System.out.println(cuentaOrigen);
-        System.out.println(cuentaDestino);
+
 
         if (cuentaOrigen == null) {
             throw new CuentaNotFoundException("La cuenta de origen no existe");
@@ -169,4 +174,5 @@ public class MovimientosService {
             throw new CuentaNotFoundException("Transferencia fallida: cuenta destino no encontrada");
         }
     }
+
 }
