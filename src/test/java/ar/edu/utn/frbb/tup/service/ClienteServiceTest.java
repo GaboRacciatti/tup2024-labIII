@@ -7,6 +7,7 @@ import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoPersona;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.MenorEdadException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
 import org.junit.jupiter.api.BeforeAll;
@@ -52,11 +53,11 @@ public class ClienteServiceTest {
         clienteMenorDeEdad.setDni(123456789);
         clienteMenorDeEdad.setTipoPersona("F");
         clienteMenorDeEdad.setBanco("Galicia");
-        assertThrows(IllegalArgumentException.class, () -> clienteService.darDeAltaCliente(clienteMenorDeEdad));
+        assertThrows(MenorEdadException.class, () -> clienteService.darDeAltaCliente(clienteMenorDeEdad));
     }
 
     @Test
-    public void testClienteSuccess() throws ClienteAlreadyExistsException {
+    public void testClienteSuccess() throws ClienteAlreadyExistsException, MenorEdadException {
         ClienteDto clienteDto = new ClienteDto();
         clienteDto.setFechaNacimiento("1978-03-25");
         clienteDto.setDni(29857643);
@@ -100,7 +101,6 @@ public class ClienteServiceTest {
 
         verify(clienteDao, times(1)).save(pepeRino);
 
-        // Verificar que la cuenta se haya agregado
         assertEquals(1, pepeRino.getCuentas().size());
         assertEquals(cuenta, pepeRino.getCuentas().get(0));
         assertEquals(pepeRino.getDni(), cuenta.getDniTitular());
@@ -124,16 +124,13 @@ public class ClienteServiceTest {
 
         clienteService.agregarCuenta(cuenta, luciano.getDni());
 
-        // Crear la segunda cuenta duplicada
         Cuenta cuenta2 = new Cuenta()
                 .setMoneda(TipoMoneda.PESOS)
                 .setBalance(500000)
                 .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
 
-        // Verificar que se lance una excepción al intentar agregar una cuenta duplicada
         assertThrows(TipoCuentaAlreadyExistsException.class, () -> clienteService.agregarCuenta(cuenta2, luciano.getDni()));
 
-        // Verificar que el cliente solo tenga una cuenta
         verify(clienteDao, times(1)).save(luciano);
         assertEquals(1, luciano.getCuentas().size());
         assertEquals(luciano.getDni(), cuenta.getDniTitular());

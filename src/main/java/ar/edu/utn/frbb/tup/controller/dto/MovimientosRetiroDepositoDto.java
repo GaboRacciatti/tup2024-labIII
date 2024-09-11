@@ -8,6 +8,7 @@
         private long numeroCuenta;
         private TipoMovimiento tipoMovimiento;
 
+        public MovimientosRetiroDepositoDto() {}
         public MovimientosRetiroDepositoDto(Double monto, long numeroCuenta, String tipoMoneda, TipoMovimiento tipoMovimiento) {
             this.monto = monto;
             this.numeroCuenta = numeroCuenta;

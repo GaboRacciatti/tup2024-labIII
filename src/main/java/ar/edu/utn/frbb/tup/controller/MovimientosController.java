@@ -44,7 +44,7 @@ public class MovimientosController {
 
     @PostMapping("/deposito")
     public ResponseEntity<MovimientosRetiroDepositoDto> depositos(@RequestBody MovimientosRetiroDepositoDto movimientoDto) 
-            throws TipoCuentaNoSoportadaException, CuentaNotFoundException, DatosMalIngresadosException, DiferenteMonedaException {
+            throws TipoCuentaNoSoportadaException, CuentaNotFoundException, DatosMalIngresadosException, DiferenteMonedaException, CuentaSinFondosException {
     
         movimientosValidator.validateMovimientos(movimientoDto);
         movimientosService.depositar(movimientoDto);

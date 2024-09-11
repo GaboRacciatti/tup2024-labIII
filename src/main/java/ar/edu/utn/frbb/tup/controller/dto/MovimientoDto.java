@@ -9,6 +9,8 @@ public class MovimientoDto {
     private String tipoMoneda;
     private TipoMovimiento tipoMovimiento;
 
+    public MovimientoDto() {}
+
     public MovimientoDto(long cuentaDestino, long cuentaOrigen, Double monto, String tipoMoneda, TipoMovimiento tipoMovimiento) {
         this.cuentaDestino = cuentaDestino;
         this.cuentaOrigen = cuentaOrigen;

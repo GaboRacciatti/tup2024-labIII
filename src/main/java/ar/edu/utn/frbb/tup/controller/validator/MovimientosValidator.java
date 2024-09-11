@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.controller.validator;
 
 import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
 import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
+import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
 import ar.edu.utn.frbb.tup.model.exception.DiferenteMonedaException;
@@ -16,6 +17,7 @@ public class MovimientosValidator {
     if (RetiroDepositoDto == null) {
       throw new DatosMalIngresadosException("El movimiento no puede ser nulo");
     }
+    
     validateMonto(RetiroDepositoDto.getMonto());
     validateTipoMoneda(RetiroDepositoDto.getTipoMoneda());
   }
@@ -48,5 +50,9 @@ public class MovimientosValidator {
     }
  }
 
-
+ public void validarCuentaOrigenDestino(Movimiento movimiento) throws DatosMalIngresadosException {
+    if (movimiento.getCuentaOrigen() == movimiento.getCuentaDestino()) {
+        throw new DatosMalIngresadosException("La cuenta de origen y destino no pueden ser la misma");
+    }
+}
 }

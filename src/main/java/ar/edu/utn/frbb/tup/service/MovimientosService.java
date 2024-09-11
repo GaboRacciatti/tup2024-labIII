@@ -75,53 +75,51 @@ public class MovimientosService {
     }
 
     public Movimiento transferir(MovimientoDto transferenciaDto)
-            throws CuentaNotFoundException, CuentaSinFondosException, DiferenteMonedaException {
-        Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
-        Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
+        throws CuentaNotFoundException, CuentaSinFondosException, DiferenteMonedaException {
 
+    Cuenta cuentaOrigen = cuentaDao.find(transferenciaDto.getCuentaOrigen());
+    Cuenta cuentaDestino = cuentaDao.find(transferenciaDto.getCuentaDestino());
 
-        if (cuentaOrigen == null) {
-            throw new CuentaNotFoundException("La cuenta de origen no existe");
-        }
-
-        Movimiento transferencia = new Movimiento(transferenciaDto);
-
-        if (cuentaDestino != null) {
-            if (cuentaOrigen.getBalance() >= transferencia.getMonto()) {
-                if (cuentaOrigen.getMoneda().equals(cuentaDestino.getMoneda())) {
-                    double comision = calcularComision(transferenciaDto, cuentaOrigen.getMoneda());
-
-                    cuentaOrigen.setBalance(cuentaOrigen.getBalance() - transferencia.getMonto() - comision);
-                    cuentaDestino.setBalance(cuentaDestino.getBalance() + transferencia.getMonto());
-
-                    Movimiento movimientoOrigen = new Movimiento(transferenciaDto);
-                    Movimiento movimientoDestino = new Movimiento(transferenciaDto);
-
-                    movimientoOrigen.setTipoMovimiento(TipoMovimiento.TRANSFERENCIA);
-                    movimientoDestino.setTipoMovimiento(TipoMovimiento.TRANSFERENCIA);
-
-                    cuentaOrigen.agregarMovimiento(movimientoOrigen);
-                    cuentaDestino.agregarMovimiento(movimientoDestino);
-
-                    cuentaDao.save(cuentaOrigen);
-                    cuentaDao.save(cuentaDestino);
-
-                } else {
-                    throw new DiferenteMonedaException("Las monedas entre cuentas debe ser la misma");
-                }
-            } else {
-                throw new CuentaSinFondosException("El monto supera al dinero disponible en la cuenta");
-            }
-
-        } else {
-            banelcoExternal(transferenciaDto, cuentaOrigen);
-        }
-
-        return new Movimiento(transferenciaDto);
+    if (cuentaOrigen == null) {
+        throw new CuentaNotFoundException("La cuenta de origen no existe");
     }
 
+    if (cuentaDestino == null) {
+        throw new CuentaNotFoundException("La cuenta de destino no existe");
+    }
 
-    private double calcularComision(MovimientoDto transferencia, TipoMoneda tipoMoneda) {
+    // Verificar si las monedas son diferentes antes de proceder
+    if (!cuentaOrigen.getMoneda().equals(cuentaDestino.getMoneda())) {
+        throw new DiferenteMonedaException("Las monedas entre cuentas deben ser la misma");
+    }
+
+    // Continuar con la lógica de la transferencia
+    if (cuentaOrigen.getBalance() >= transferenciaDto.getMonto()) {
+        double comision = calcularComision(transferenciaDto, cuentaOrigen.getMoneda());
+
+        cuentaOrigen.setBalance(cuentaOrigen.getBalance() - transferenciaDto.getMonto() - comision);
+        cuentaDestino.setBalance(cuentaDestino.getBalance() + transferenciaDto.getMonto());
+
+        Movimiento movimientoOrigen = new Movimiento(transferenciaDto);
+        Movimiento movimientoDestino = new Movimiento(transferenciaDto);
+
+        movimientoOrigen.setTipoMovimiento(TipoMovimiento.TRANSFERENCIA);
+        movimientoDestino.setTipoMovimiento(TipoMovimiento.TRANSFERENCIA);
+
+        cuentaOrigen.agregarMovimiento(movimientoOrigen);
+        cuentaDestino.agregarMovimiento(movimientoDestino);
+
+        cuentaDao.save(cuentaOrigen);
+        cuentaDao.save(cuentaDestino);
+    } else {
+        throw new CuentaSinFondosException("El monto supera al dinero disponible en la cuenta");
+    }
+
+    return new Movimiento(transferenciaDto);
+}
+
+
+    public double calcularComision(MovimientoDto transferencia, TipoMoneda tipoMoneda) {
         double monto = transferencia.getMonto();
         double comision = 0;
 

@@ -68,5 +68,4 @@ public class CuentaDao  extends AbstractBaseDao{
             }
             return null;
         }
-
 }

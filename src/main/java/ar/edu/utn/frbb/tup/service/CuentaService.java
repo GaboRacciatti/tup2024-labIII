@@ -70,6 +70,14 @@ public class CuentaService {
         return cuenta;
     }
 
+    public boolean tieneFondosSuficientes(Long numeroCuenta, Double monto) throws CuentaNotFoundException {
+        Cuenta cuenta = cuentaDao.find(numeroCuenta);
+        if (cuenta == null) {
+            throw new CuentaNotFoundException("La cuenta con ID " + numeroCuenta + " no existe");
+        }
+
+        return cuenta.getBalance() >= monto;
+    }
     
     public Cuenta update(Cuenta cuenta) throws CuentaNotFoundException {
         cuentaDao.update(cuenta);

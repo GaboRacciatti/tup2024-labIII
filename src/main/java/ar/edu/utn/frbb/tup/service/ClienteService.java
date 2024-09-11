@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteNotFoundException;
+import ar.edu.utn.frbb.tup.model.exception.MenorEdadException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
 
@@ -21,7 +22,7 @@ public class ClienteService {
         this.clienteDao = clienteDao;
     }
 
-    public Cliente darDeAltaCliente(ClienteDto clienteDto) throws ClienteAlreadyExistsException {
+    public Cliente darDeAltaCliente(ClienteDto clienteDto) throws ClienteAlreadyExistsException, MenorEdadException {
         Cliente cliente = new Cliente(clienteDto);
 
         if (clienteDao.find(cliente.getDni(), false) != null) {
@@ -29,7 +30,7 @@ public class ClienteService {
         }
 
         if (cliente.getEdad() < 18) {
-            throw new IllegalArgumentException("El cliente debe ser mayor a 18 años");
+            throw new MenorEdadException("El cliente debe ser mayor a 18 años");
         }
 
         clienteDao.save(cliente);

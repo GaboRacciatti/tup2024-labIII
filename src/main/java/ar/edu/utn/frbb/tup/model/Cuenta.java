@@ -20,7 +20,9 @@ public class Cuenta {
     private TipoMoneda moneda;
     private long dniTitular;
     LinkedList<Movimiento> movimientos;
-    public Cuenta() {}
+    public Cuenta() {
+        LinkedList<Movimiento> movimientos;
+    }
 
     public Cuenta(CuentaDto cuentaDto) {
         this.tipoCuenta = TipoCuenta.fromString(cuentaDto.getTipoCuenta());
@@ -132,8 +134,6 @@ public class Cuenta {
         }
         this.balance -= monto;
     }
-    
-    
 
     public long getNumeroCuenta() {
         return numeroCuenta;

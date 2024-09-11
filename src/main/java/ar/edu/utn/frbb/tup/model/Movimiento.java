@@ -48,13 +48,6 @@ public class Movimiento {
     public int hashCode() {
         return Objects.hashCode(moneda);
     }
-    public TipoMoneda getTipoMoneda() {
-        return moneda;
-    }
-
-    public void setTipoMoneda(TipoMoneda moneda) {
-        this.moneda = moneda;
-    }
 
     public void setMonto(Double monto) {
         this.monto = monto;

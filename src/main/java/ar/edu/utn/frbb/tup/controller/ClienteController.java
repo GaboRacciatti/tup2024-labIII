@@ -5,6 +5,7 @@ import ar.edu.utn.frbb.tup.controller.validator.ClienteValidator;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
 import ar.edu.utn.frbb.tup.model.exception.ClienteNotFoundException;
+import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
 import ar.edu.utn.frbb.tup.model.exception.MenorEdadException;
 import ar.edu.utn.frbb.tup.service.ClienteService;
 
@@ -25,7 +26,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public Cliente crearCliente(@RequestBody ClienteDto clienteDto) throws ClienteAlreadyExistsException, MenorEdadException {
+    public Cliente crearCliente(@RequestBody ClienteDto clienteDto) throws ClienteAlreadyExistsException, MenorEdadException, DatosMalIngresadosException {
         clienteValidator.validate(clienteDto);
         return clienteService.darDeAltaCliente(clienteDto);
     }
