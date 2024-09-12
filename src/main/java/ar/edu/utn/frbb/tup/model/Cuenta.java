@@ -4,11 +4,11 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import ar.edu.utn.frbb.tup.model.enums.TipoBanco;
 import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.exception.CantidadNegativaException;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.CuentaDto;
 
 public class Cuenta {
     private static long contadorCuentas = 1;
@@ -110,6 +110,9 @@ public class Cuenta {
     }
 
     public void agregarMovimiento(Movimiento movimiento) {
+        if (movimientos == null) {
+            movimientos = new LinkedList<>();
+        }
         this.movimientos.add(movimiento);
     }
 

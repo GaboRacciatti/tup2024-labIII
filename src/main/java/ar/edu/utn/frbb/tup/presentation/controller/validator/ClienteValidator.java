@@ -1,7 +1,8 @@
-package ar.edu.utn.frbb.tup.controller.validator;
+package ar.edu.utn.frbb.tup.presentation.controller.validator;
 
-import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import org.springframework.stereotype.Component;
+
+import ar.edu.utn.frbb.tup.presentation.controller.dto.ClienteDto;
 
 @Component
 public class ClienteValidator {

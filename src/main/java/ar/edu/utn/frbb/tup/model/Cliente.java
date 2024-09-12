@@ -5,10 +5,10 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoPersona;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.ClienteDto;
 
 public class Cliente extends Persona {
 
@@ -65,7 +65,9 @@ public class Cliente extends Persona {
         this.cuentas.add(cuenta);
     }
 
-    public boolean tieneCuenta(TipoCuenta tipoCuenta, TipoMoneda moneda) {
+  
+
+    public boolean tieneCuenta( TipoCuenta tipoCuenta, TipoMoneda moneda) {
         return cuentas.stream()
             .anyMatch(cuenta -> cuenta.getTipoCuenta().equals(tipoCuenta) && cuenta.getMoneda().equals(moneda));
     }

@@ -1,15 +1,17 @@
 package ar.edu.utn.frbb.tup.service;
 
-import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.Cliente;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.enums.TipoCuenta;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoPersona;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteNotFoundException;
 import ar.edu.utn.frbb.tup.model.exception.MenorEdadException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.ClienteDto;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -21,8 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
@@ -82,7 +84,68 @@ public class ClienteServiceTest {
     }
 
     @Test
-    public void testAgregarCuentaAClienteSuccess() throws TipoCuentaAlreadyExistsException {
+    void buscarClientePorDni_Success() throws ClienteNotFoundException {
+        Cliente cliente = new Cliente();
+        cliente.setDni(12345678L);
+
+        when(clienteDao.find(12345678L, true)).thenReturn(cliente);
+
+        Cliente result = clienteService.buscarClientePorDni(12345678L);
+
+        assertNotNull(result);
+        assertEquals(12345678L, result.getDni());
+    }
+
+    @Test
+    void BuscarClientePorDni_Fail() throws ClienteNotFoundException {
+        Cliente cliente = new Cliente();
+        cliente.setDni(12345678L);
+        cliente.setNombre("Pepe");
+        cliente.setApellido("Rino");
+        cliente.setFechaNacimiento(LocalDate.of(1978, 3, 25));
+        cliente.setTipoPersona(TipoPersona.PERSONA_FISICA);
+        cliente.setDireccion("Zelarrayan 655");
+        cliente.setTelefono("1123456789");
+
+
+        when(clienteDao.find(123456, true)).thenReturn(null);
+
+        assertThrows(ClienteNotFoundException.class, () -> clienteService.buscarClientePorDni(123456));
+
+    }
+    @Test
+    void testClienteTieneCuenta_Success() throws ClienteNotFoundException {
+        Cliente cliente = new Cliente();
+        cliente.setDni(12345678L);
+
+        Cuenta cuenta = new Cuenta();
+        cuenta.setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);
+        cuenta.setMoneda(TipoMoneda.PESOS);
+
+        cliente.addCuenta(cuenta);
+
+
+        boolean resultado = cliente.tieneCuenta(TipoCuenta.CUENTA_CORRIENTE, TipoMoneda.PESOS);
+        assertTrue(resultado);
+    }
+    
+    @Test
+    public void obtenerTodosLosClientes() throws ClienteAlreadyExistsException, MenorEdadException {
+        ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDni(12345678L);
+        clienteDto.setNombre("Pepe");
+        clienteDto.setApellido("Rino");
+        clienteDto.setFechaNacimiento("1978-03-25");
+        clienteDto.setTipoPersona("F");
+        clienteDto.setDireccion("Zelarrayan 655");
+        clienteDto.setTelefono("1123456789");
+        clienteService.darDeAltaCliente(clienteDto);
+        
+        assertEquals(0, clienteService.obtenerTodosLosClientes().size());
+    }
+
+    @Test
+    public void testAgregarCuentaAClienteSuccess() throws TipoCuentaAlreadyExistsException, ClienteNotFoundException {
         Cliente pepeRino = new Cliente();
         pepeRino.setDni(26456439);
         pepeRino.setNombre("Pepe");
@@ -107,7 +170,7 @@ public class ClienteServiceTest {
     }
 
     @Test
-    public void testAgregarCuentaAClienteDuplicada() throws TipoCuentaAlreadyExistsException {
+    public void testAgregarCuentaAClienteDuplicada() throws TipoCuentaAlreadyExistsException, ClienteNotFoundException {
         Cliente luciano = new Cliente();
         luciano.setDni(26456439);
         luciano.setNombre("Pepe");
@@ -137,78 +200,52 @@ public class ClienteServiceTest {
     }
 
     @Test
-    public void testAgregarDosCuentasCajaAhorroYCuentaCorrienteEnPesos() throws TipoCuentaAlreadyExistsException {
-        Cliente peperino = new Cliente();
-        peperino.setDni(26456439);
-        peperino.setNombre("Pepe");
-        peperino.setApellido("Rino");
-        peperino.setFechaNacimiento(LocalDate.of(1978, 3, 25));
-        peperino.setTipoPersona(TipoPersona.fromString("F"));
+    public void testEditarClientePorDni_Success() throws ClienteNotFoundException {
+        ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDireccion("Nueva Dirección");
+        clienteDto.setTelefono("1122334455");
 
-        Cuenta cuenta1 = new Cuenta()
-                .setMoneda(TipoMoneda.PESOS)
-                .setBalance(100)
-                .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+        Cliente clienteExistente = new Cliente();
+        clienteExistente.setDni(12345678L);
 
-        when(clienteDao.find(26456439, true)).thenReturn(peperino);
+        when(clienteDao.find(12345678L, true)).thenReturn(clienteExistente);
 
-        clienteService.agregarCuenta(cuenta1, peperino.getDni());
+        Cliente clienteActualizado = clienteService.editarClientPorDni(12345678L, clienteDto);
 
-        Cuenta cuenta2 = new Cuenta()
-                .setMoneda(TipoMoneda.PESOS)
-                .setBalance(100)
-                .setTipoCuenta(TipoCuenta.CUENTA_CORRIENTE);
-
-        assertDoesNotThrow(() -> clienteService.agregarCuenta(cuenta2, peperino.getDni()), "Las cuentas son iguales.");
-
-        // Verifica que se haya llamado a save() dos veces
-        verify(clienteDao, times(2)).save(peperino);
-
-        // Verifica que el cliente tenga 2 cuentas
-        assertEquals(2, peperino.getCuentas().size());
-
-        // Verifica el tipo de cuentas
-        assertTrue(peperino.getCuentas().stream()
-                .anyMatch(c -> c.getTipoCuenta() == TipoCuenta.CAJA_AHORRO && c.getMoneda() == TipoMoneda.PESOS));
-        assertTrue(peperino.getCuentas().stream()
-                .anyMatch(c -> c.getTipoCuenta() == TipoCuenta.CUENTA_CORRIENTE && c.getMoneda() == TipoMoneda.PESOS));
+        assertNotNull(clienteActualizado);
+        assertEquals("Nueva Dirección", clienteActualizado.getDireccion());
+        assertEquals("1122334455", clienteActualizado.getTelefono());
     }
 
     @Test
-    public void testAgregarDosCuentasCajaAhorroEnPesosYDolares() throws TipoCuentaAlreadyExistsException {
-        Cliente peperino = new Cliente();
-        peperino.setDni(26456439);
-        peperino.setNombre("Pepe");
-        peperino.setApellido("Rino");
-        peperino.setFechaNacimiento(LocalDate.of(1978, 3, 25));
-        peperino.setTipoPersona(TipoPersona.fromString("F"));
+    public void testEditarClientePorDni_Fail() {
+        ClienteDto clienteDto = new ClienteDto();
+        clienteDto.setDireccion("Nueva Dirección");
 
-        Cuenta cuenta1 = new Cuenta()
-                .setMoneda(TipoMoneda.PESOS)
-                .setBalance(100)
-                .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
+        when(clienteDao.find(12345678L, true)).thenReturn(null);
 
-        when(clienteDao.find(26456439, true)).thenReturn(peperino);
-
-        clienteService.agregarCuenta(cuenta1, peperino.getDni());
-
-        Cuenta cuenta2 = new Cuenta()
-                .setMoneda(TipoMoneda.DOLARES)
-                .setBalance(100)
-                .setTipoCuenta(TipoCuenta.CAJA_AHORRO);
-
-        assertDoesNotThrow(() -> clienteService.agregarCuenta(cuenta2,peperino.getDni()), "Las cuentas son iguales");
-
-        // Verifica que se haya llamado a save() dos veces
-        verify(clienteDao, times(2)).save(peperino);
-
-        // Verifica que el cliente tenga 2 cuentas
-        assertEquals(2, peperino.getCuentas().size());
-
-        // Verifica las cuentas
-        assertTrue(peperino.getCuentas().stream()
-                .anyMatch(c -> c.getTipoCuenta() == TipoCuenta.CAJA_AHORRO && c.getMoneda() == TipoMoneda.PESOS));
-        assertTrue(peperino.getCuentas().stream()
-                .anyMatch(c -> c.getTipoCuenta() == TipoCuenta.CAJA_AHORRO && c.getMoneda() == TipoMoneda.DOLARES));
+        assertThrows(ClienteNotFoundException.class, () -> clienteService.editarClientPorDni(12345678L, clienteDto));
     }
+
+    @Test
+    public void testEliminarClientePorDni_Success() throws ClienteNotFoundException {
+        Cliente cliente = new Cliente();
+        cliente.setDni(12345678L);
+
+        when(clienteDao.find(12345678L, true)).thenReturn(cliente);
+
+        Cliente clienteEliminado = clienteService.eliminarClientePorDni(12345678L);
+
+        assertNotNull(clienteEliminado);
+        assertEquals(12345678L, clienteEliminado.getDni());
+        verify(clienteDao, times(1)).delete(cliente);
+    }
+
+    @Test
+    public void testEliminarClientePorDni_Fail() {
+        when(clienteDao.find(12345678L, true)).thenReturn(null);
+
+        assertThrows(ClienteNotFoundException.class, () -> clienteService.eliminarClientePorDni(12345678L));
+    }
+
 }

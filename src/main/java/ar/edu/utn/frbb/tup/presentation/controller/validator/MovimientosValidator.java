@@ -1,12 +1,12 @@
-package ar.edu.utn.frbb.tup.controller.validator;
+package ar.edu.utn.frbb.tup.presentation.controller.validator;
 
-import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
-import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
 import ar.edu.utn.frbb.tup.model.exception.DiferenteMonedaException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNoSoportadaException;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientoDto;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientosRetiroDepositoDto;
 
 import org.springframework.stereotype.Component;
 

@@ -26,7 +26,7 @@ public class CuentaDao  extends AbstractBaseDao{
         if (getInMemoryDatabase().get(numeroCuenta) == null) {
             return null;
         }
-        return ((CuentaEntity) getInMemoryDatabase().get(numeroCuenta)).toCuenta();
+       return ((CuentaEntity) getInMemoryDatabase().get(numeroCuenta)).toCuenta();
     }
     
     public void update(Cuenta cuenta) throws CuentaNotFoundException {

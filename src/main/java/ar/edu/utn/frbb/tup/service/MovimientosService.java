@@ -1,13 +1,14 @@
 package ar.edu.utn.frbb.tup.service;
 
-import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
-import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
 import ar.edu.utn.frbb.tup.model.exception.*;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientoDto;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientosRetiroDepositoDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,15 +86,15 @@ public class MovimientosService {
     }
 
     if (cuentaDestino == null) {
-        throw new CuentaNotFoundException("La cuenta de destino no existe");
+        banelcoExternal(transferenciaDto, cuentaOrigen);
+
+        return new Movimiento(transferenciaDto);
     }
 
-    // Verificar si las monedas son diferentes antes de proceder
     if (!cuentaOrigen.getMoneda().equals(cuentaDestino.getMoneda())) {
         throw new DiferenteMonedaException("Las monedas entre cuentas deben ser la misma");
     }
 
-    // Continuar con la lógica de la transferencia
     if (cuentaOrigen.getBalance() >= transferenciaDto.getMonto()) {
         double comision = calcularComision(transferenciaDto, cuentaOrigen.getMoneda());
 
@@ -123,7 +124,6 @@ public class MovimientosService {
         double monto = transferencia.getMonto();
         double comision = 0;
 
-        // Aplicar comisión según la moneda y monto de transferencia
         switch (tipoMoneda) {
             case PESOS -> {
                 if (monto > 1000000) {
@@ -143,7 +143,6 @@ public class MovimientosService {
     public void banelcoExternal(MovimientoDto transferencia, Cuenta cuentaOrigen)
             throws CuentaNotFoundException, CuentaSinFondosException {
 
-        // Verificar que la cuenta origen tenga fondos suficientes
         double comision = calcularComision(transferencia, cuentaOrigen.getMoneda());
         double montoTotal = transferencia.getMonto() + comision;
 
@@ -151,7 +150,6 @@ public class MovimientosService {
             throw new CuentaSinFondosException("Fondos insuficientes para realizar la transferencia");
         }
 
-        // Llamar al servicio externo para realizar la transferencia
         boolean transferenciaExitosa = banelcoService.realizarTransferenciaBanelco(
                 transferencia.getCuentaOrigen(),
                 transferencia.getCuentaDestino(),
@@ -159,14 +157,12 @@ public class MovimientosService {
         );
 
         if (transferenciaExitosa) {
-            // Actualizar el saldo de la cuenta origen y registrar el movimiento
             cuentaOrigen.setBalance(cuentaOrigen.getBalance() - montoTotal);
 
             Movimiento movimiento = new Movimiento(transferencia);
             movimiento.setTipoMovimiento(TipoMovimiento.TRANSFERENCIA);
             cuentaOrigen.agregarMovimiento(movimiento);
 
-            // Guardar las actualizaciones en la base de datos
             cuentaDao.update(cuentaOrigen);
         } else {
             throw new CuentaNotFoundException("Transferencia fallida: cuenta destino no encontrada");

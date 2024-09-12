@@ -1,4 +1,4 @@
-package ar.edu.utn.frbb.tup.controller.handler;
+package ar.edu.utn.frbb.tup.presentation.controller.handler;
 
 import ar.edu.utn.frbb.tup.model.exception.CuentaNotFoundException;
 import ar.edu.utn.frbb.tup.model.exception.CuentaSinFondosException;
@@ -43,7 +43,7 @@ public class TupResponseEntityExceptionHandler extends ResponseEntityExceptionHa
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler({DiferenteMonedaException.class, DatosMalIngresadosException.class, TipoCuentaNoSoportadaException.class, CuentaNotFoundException.class, CuentaSinFondosException.class})
+    @ExceptionHandler({DiferenteMonedaException.class, DatosMalIngresadosException.class, TipoCuentaNoSoportadaException.class})
     protected ResponseEntity<Object> handleNoSoportada(
             Exception ex, WebRequest request) {
         CustomApiError error = new CustomApiError();
@@ -51,6 +51,16 @@ public class TupResponseEntityExceptionHandler extends ResponseEntityExceptionHa
         return handleExceptionInternal(ex, error,
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+    @ExceptionHandler({CuentaNotFoundException.class, CuentaSinFondosException.class})
+    protected ResponseEntity<Object> handleNoTSoportada(
+        Exception ex, WebRequest request) {
+    CustomApiError error = new CustomApiError();
+    error.setErrorMessage(ex.getMessage());
+    return handleExceptionInternal(ex, error,
+            new HttpHeaders(), HttpStatus.CONFLICT, request);   
+}
+
+
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

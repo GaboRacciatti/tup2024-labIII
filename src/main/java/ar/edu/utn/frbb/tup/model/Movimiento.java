@@ -6,11 +6,12 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
-import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
 import ar.edu.utn.frbb.tup.model.enums.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientoDto;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientosRetiroDepositoDto;
+@JsonInclude(JsonInclude.Include.NON_NULL) /* Uso el json include para que cuando muestro el historial de transferencias,
+no me muestre en retiro y deposito cosas que se mostraban null por no tener que definirlas en un movimiento de tipo retiro o deposito*/ 
 public class Movimiento {
 
     LocalTime hora;

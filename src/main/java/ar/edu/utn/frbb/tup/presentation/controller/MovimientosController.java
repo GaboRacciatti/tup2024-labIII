@@ -1,8 +1,5 @@
-package ar.edu.utn.frbb.tup.controller;
+package ar.edu.utn.frbb.tup.presentation.controller;
 
-import ar.edu.utn.frbb.tup.controller.dto.MovimientoDto;
-import ar.edu.utn.frbb.tup.controller.dto.MovimientosRetiroDepositoDto;
-import ar.edu.utn.frbb.tup.controller.validator.MovimientosValidator;
 import ar.edu.utn.frbb.tup.model.Cuenta;
 import ar.edu.utn.frbb.tup.model.Movimiento;
 import ar.edu.utn.frbb.tup.model.enums.TipoMovimiento;
@@ -11,6 +8,9 @@ import ar.edu.utn.frbb.tup.model.exception.CuentaSinFondosException;
 import ar.edu.utn.frbb.tup.model.exception.DatosMalIngresadosException;
 import ar.edu.utn.frbb.tup.model.exception.DiferenteMonedaException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaNoSoportadaException;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientoDto;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.MovimientosRetiroDepositoDto;
+import ar.edu.utn.frbb.tup.presentation.controller.validator.MovimientosValidator;
 import ar.edu.utn.frbb.tup.service.CuentaService;
 import ar.edu.utn.frbb.tup.service.MovimientosService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class MovimientosController {
     
 
     @GetMapping("/{numeroCuenta}")
-    public List<Movimiento> getMovimientos(@PathVariable Long numeroCuenta) {
+    public List<Movimiento> getMovimientos(@PathVariable Long numeroCuenta) throws CuentaNotFoundException {
         Cuenta cuenta = cuentaService.find(numeroCuenta);
         return cuenta.getMovimientos();
     }

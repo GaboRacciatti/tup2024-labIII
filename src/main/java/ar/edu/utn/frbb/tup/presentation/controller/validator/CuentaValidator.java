@@ -1,8 +1,8 @@
-package ar.edu.utn.frbb.tup.controller.validator;
+package ar.edu.utn.frbb.tup.presentation.controller.validator;
 
 import org.springframework.stereotype.Component;
 
-import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
+import ar.edu.utn.frbb.tup.presentation.controller.dto.CuentaDto;
 
 
 @Component

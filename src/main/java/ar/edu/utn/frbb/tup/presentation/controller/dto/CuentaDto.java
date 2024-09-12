@@ -1,4 +1,4 @@
-package ar.edu.utn.frbb.tup.controller.dto;
+package ar.edu.utn.frbb.tup.presentation.controller.dto;
 
 import java.util.LinkedHashSet;
 
