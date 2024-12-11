@@ -1,9 +1,9 @@
-# tup2024
-# PARA EJECUTAR EL PROYECTO: RUN EN src\main\java\ar\edu\utn\frbb\tup\Application.java
-## SE UTILIZO TODO LO VISTO EN EL CURSADO, SOLO INCLUÍ JSONInclude PARA NO MOSTRAR NULLS.
+# Sistema Bancario con JAVA 
+### PARA EJECUTAR EL PROYECTO: RUN EN src\main\java\ar\edu\utn\frbb\tup\Application.java
+### SE UTILIZO TODO LO VISTO EN EL CURSADO, SOLO INCLUÍ JSONInclude PARA NO MOSTRAR NULLS.
 # EJEMPLOS DE ENDPOINTS.
-# //CLIENTES
-
+## //CLIENTES
+```bash
 {
   "nombre": "Gabriel",
   "apellido": "Racciatti",
@@ -13,6 +13,9 @@
   "direccion": "Zelarrayan 655",
   "tipoPersona": "F"
 }
+```
+```bash
+
 {
   "nombre": "Pepe",
   "apellido": "Rino",
@@ -22,7 +25,10 @@
   "direccion": "Av. Alem 655",
   "tipoPersona": "F"
 }
-//CUENTAS
+```
+## //CUENTAS
+```bash
+
 {
   "tipoCuenta": "CA",
   "dniTitular": 46352010,
@@ -30,7 +36,8 @@
   "balance": 100000,
   "tipoBanco": "BBVA"
 }
-
+```
+```bash
 {
   "tipoCuenta": "CA",
   "dniTitular": 22539121,
@@ -38,21 +45,28 @@
   "balance": 100000,
   "tipoBanco": "BBVA"
 }
-// TRANSFERENCIA
+```
+## // TRANSFERENCIA
+```bash
 {
     "cuentaOrigen": 1,
     "cuentaDestino": 2,
     "monto": 1000.0,
     "tipoMoneda": "P"
 }
+```
 //Deposito / Retiro
+```bash
 {
   "numeroCuenta": 1,
   "monto": 500.0,
   "moneda": "PESOS"
 }
+```
+```bash
 {
   "numeroCuenta": 2,
   "monto": 1000,
   "moneda" : "PESOS"
 }
+```
