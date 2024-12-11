@@ -1,8 +1,9 @@
 # tup2024
-PARA EJECUTAR EL PROYECTO: RUN EN src\main\java\ar\edu\utn\frbb\tup\Application.java
-SE UTILIZO TODO LO VISTO EN EL CURSADO, SOLO INCLUÍ JSONInclude PARA NO MOSTRAR NULLS.
-EJEMPLOS DE ENDPOINTS.
-//CLIENTES
+# PARA EJECUTAR EL PROYECTO: RUN EN src\main\java\ar\edu\utn\frbb\tup\Application.java
+## SE UTILIZO TODO LO VISTO EN EL CURSADO, SOLO INCLUÍ JSONInclude PARA NO MOSTRAR NULLS.
+# EJEMPLOS DE ENDPOINTS.
+# //CLIENTES
+
 {
   "nombre": "Gabriel",
   "apellido": "Racciatti",
